@@ -4,28 +4,28 @@
   //sets value of student id in hidden delete form and submits form
   //not completely ideal but wanted to take advantage of flash messages in sails
   function deleteRecord(record_id){
-    $("#deleteform input[name=student_id]").val(record_id);
+    $("#deleteform input[name=instructor_id]").val(record_id);
     $("#deleteform").submit();
   }
 
-  function getStudent(record_id){
-    return $.get("http://localhost:1337/student/" + record_id, function(data){
-      console.log("got student");
+  function getInstructor(record_id){
+    return $.get("http://localhost:1337/instructor/" + record_id, function(data){
+      console.log("got instructor");
     })
   }
 
   $(function(){
 
     //initialize variables for items in the DOM we will work with
-    let manageStudentForm = $("#manageStudentForm");
-    let addStudentButton = $("#addStudentButton");
+    let manageInstructorForm = $("#manageInstructorForm");
+    let addInstructorButton = $("#addInstructorButton");
 
-    $('#studentTable').DataTable({
+    $('#instructorTable').DataTable({
 
       colReorder: true,
      "scrollX": true,
       columnDefs: [
-            { width: '20%', targets: 7}
+            { width: '20%', targets: 6}
         ],
       dom: 'Bfrtip',
       buttons: [
@@ -33,8 +33,7 @@
       ]
     });
 
-    //this section is for jvalidation rules and warning messages
-    var validator = $("#manageStudentForm").validate({
+    var validator = $("#manageInstructorForm").validate({
       rules: {
         first_name: {
           required: true,
@@ -43,17 +42,6 @@
         last_name: {
           required: true,
           minlength: 2
-        },
-        start_date: {
-          pattern: /^\d{4}-((0\d)|(1[012]))-(([012]\d)|3[01])$/
-        },
-        gpa: {
-          min: 2,
-          max: 4.0
-        },
-        sat: {
-          min: 500,
-          max: 2000
         }
       },
       messages: {
@@ -64,27 +52,16 @@
         last_name: {
           required: "Last name is required",
           minlength: "At least 2 characters required!"
-        },
-        start_date: {
-           pattern: "The format should be yyyy-mm-dd"
-         },
-        gpa: {
-          min: "The min gpa should be 2",
-          max: "The max gpa is 4"
-        },
-        sat: {
-          min: "The min sat should be 500",
-          max: "The max sat is 2000"
         }
       }
     });
 
     //add student button functionality
-    addStudentButton.click(function(){
-       $("input").val('');
+    addInstructorButton.click(function(){
+      $("input").val('');
       validator.resetForm();
-      manageStudentForm.attr("action", "/create_student");
-      manageStudentForm.dialog({
+      manageInstructorForm.attr("action", "/create_instructor");
+      manageInstructorForm.dialog({
         title: "Add Record",
         width: 700,
         modal: true,
@@ -94,21 +71,21 @@
           },
           "Submit": function() {
             //function to delete record
-            manageStudentForm.submit()
+            manageInstructorForm.submit()
           }
         }
       });
     })
 
-  	$("#studentTable").on("click", "#editButton", function(e){
+  	$("#instructorTable").on("click", "#editButton", function(e){
       validator.resetForm();
-      let recordId = $(this).data("studentid")
-      manageStudentForm.find("input[name=student_id]").val(recordId);
-      manageStudentForm.attr("action", "/update_student");
-      let student = getStudent(recordId);
+      let recordId = $(this).data("instructorid")
+      manageInstructorForm.find("input[name=instructor_id]").val(recordId);
+      manageInstructorForm.attr("action", "/update_instructor");
+      let instructor = getInstructor(recordId);
 
       //populate form when api call is done (after we get student to edit)
-      student.done(function(data){
+      instructor.done(function(data){
         $.each(data, function(name, val){
             var $el = $('[name="'+name+'"]'),
                 type = $el.attr('type');
@@ -126,7 +103,7 @@
         });
       })
 
-      manageStudentForm.dialog({
+      manageInstructorForm.dialog({
         title: "Update Record",
         width: 700,
         modal: true,
@@ -136,7 +113,7 @@
           },
           Submit: function() {
             //function to delete record
-            manageStudentForm.submit()
+            manageInstructorForm.submit()
           }
         }
       });
